@@ -135,23 +135,23 @@ func (p *Processor) Unmarshal(data []byte) (interface{}, error) {
 	}
 
 	// id
-	var id uint16
-	if p.littleEndian {
-		id = binary.LittleEndian.Uint16(data)
-	} else {
-		id = binary.BigEndian.Uint16(data)
-	}
-	if id >= uint16(len(p.msgInfo)) {
-		return nil, fmt.Errorf("message id %v not registered", id)
-	}
+	var id uint16 = 0
+	//if p.littleEndian {
+	//	id = binary.LittleEndian.Uint16(data)
+	//} else {
+	//	id = binary.BigEndian.Uint16(data)
+	//}
+	//if id >= uint16(len(p.msgInfo)) {
+	//	return nil, fmt.Errorf("message id %v not registered", id)
+	//}
 
 	// msg
 	i := p.msgInfo[id]
 	if i.msgRawHandler != nil {
-		return MsgRaw{id, data[2:]}, nil
+		return MsgRaw{id, data[0:]}, nil
 	} else {
 		msg := reflect.New(i.msgType.Elem()).Interface()
-		return msg, proto.UnmarshalMerge(data[2:], msg.(proto.Message))
+		return msg, proto.UnmarshalMerge(data[0:], msg.(proto.Message))
 	}
 }
 
